@@ -4,84 +4,76 @@ const bodyParser=require('body-parser');
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-const ids=[];
-const tasks = [];
-const states=[];
 
-router.get('/', (req,res)=>{    // GET
-    
-    
-  res.send({tasks,ids ,states});
-
-   res.end(); });
+let tasks=[];
+let id=0;
 
 
-router.post('/',(req,res)=>{   //POST
-  console.log({r:req.body})
- const task=req.body.task;
+router.post('/',(req,res)=>{   //POSTconst id=0;
 
-//
-   const id=req.body.id;
-//
+  addTaskInfo={
 
- const state= req.body.state;
-  states.push(state);
- tasks.push(task)
- 
-    ids.push(id);
+  "id": ++id,
+  "task": req.body.task ,
+  "state":req.body.state,
 
+  }
+tasks.push(addTaskInfo);
 
-res.send({tasks,ids ,states});
+let task = addTaskInfo['task'];
+let state =  addTaskInfo['state'];
 
-
-
+console.log(id)
+console.log(task)
+console.log(state)
 res.end();
     }
 );
 
+router.get('/', (req,res)=>{    // GET  
+  res.send(tasks);
+   res.end(); 
+  
+  });
+
+
 
 router.delete('/:id',(req,res)=>{    //DELETE
+  const idToDelete=req.params.id;
 
-  console.log('id to delete: '+  req.params.id)
- 
-const idToDelete=req.params.id;
+  for(let ele in tasks){
 
+  if(tasks[ele]['id']==idToDelete)
+  {
+    delete tasks[ele];
+  }}
+  res.end();
+  });
 
- for(let i=0 ;i<tasks.length;i++){
- 
-if(idToDelete==ids[i]){
-  item=ids[i]
-  tasks.splice(i,1);
-  states.splice(i,1);
-   ids.splice(i,1);
- }
- //
-res.end();
-
-}
-
-
-})
 
 
 router.put('/:id',(req,res)=>{    //PUT
-  idToEdit= req.params.id;
-  console.log(idToEdit)
 
-  for(let i=0;i<states.length;i++)
+  console.log('id to edit: '+  req.params.id)
+     
+  const idToEdit=req.params.id;
+
+  for(let ele in tasks){
+console.log(tasks[ele]['id']);
+if(tasks[ele]['id']==idToEdit)
 {
-if(ids[i]==idToEdit){
-  if(states[i]=='done') 
-    states.splice(i,1,'undone');
-  else
-  states.splice(i,1,'done');
-}
+  if(tasks[ele]['state']=='done') {
+    tasks[ele]['state']='undone';}
 
-}
-res.send({tasks,ids ,states});
-res.end();
-});
 
+    else{
+         tasks[ele]['state']='done';
+    }
+ 
+}
+    }
+    res.end();
+  });
 module.exports=router;
 
 
